@@ -1,5 +1,9 @@
 # FastAPI for student grade prediction
 
+Dataset taken from [kaggle](https://www.kaggle.com/code/biancacarvalho/a2-icd-student-alcohol-consumption). 
+
+Objective: predict student grade based (regression).
+
 ## To start:
 
 Create virtual environment, install required packages:
