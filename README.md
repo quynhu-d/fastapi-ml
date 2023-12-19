@@ -1,5 +1,7 @@
 # FastAPI for student grade prediction
 
+Данг Куинь Ньы (Нина), tg: @quynhu_d
+
 Dataset taken from [kaggle](https://www.kaggle.com/code/biancacarvalho/a2-icd-student-alcohol-consumption). 
 
 Objective: predict student grade based (regression).
@@ -17,7 +19,13 @@ pip install -r requirements.txt
 ## Run API:
 
 ```bash
+cd src
 uvicorn app:app --reload --host 0.0.0.0 --port 8008
+```
+or
+```bash
+cd src
+python app.py
 ```
 
 API with Swagger Documentation can be accessed via http://localhost:8008/docs#/.
