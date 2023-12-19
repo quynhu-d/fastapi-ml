@@ -1,14 +1,17 @@
-from fastapi import HTTPException
 from pydantic import BaseModel
 from typing import Optional, List
-from ..data import Item, process_data
+from data import Data
 import json
-
+import pickle
+import os
 
 from sklearn.linear_model import LinearRegression
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.svm import SVR
+from sklearn.model_selection import cross_val_score
+from sklearn.metrics import mean_absolute_error as mae, mean_squared_error as mse
+
 
 AVAILABLE_MODELS = ["LinearRegression", "DecisionTreeRegressor", "RandomForestRegressor", "SVR"]
 
@@ -78,10 +81,33 @@ def get_model(
         model_config_dict = {}
     # model_config_dict = {param: val for param, val in model_config.dict().items() if val}
     # print(model_config_dict)
-    if model_type not in AVAILABLE_MODELS:
-        raise HTTPException(
-            status_code=404,
-            detail=f"Model {model_type} not available. Please choose from {AVAILABLE_MODELS}."
-        )
     model = eval(model_type)(**model_config_dict)
     return model
+
+def load_model(model_path):
+    with open(model_path, 'rb') as f:
+        model = pickle.load(f)
+    return model
+
+def save_model(model, model_path):
+    with open(model_path, 'wb') as f:
+        pickle.dump(model, f)
+
+def delete_model(model_path: str):
+    os.remove(model_path)
+
+def eval_trained_model(model, data:Data, train_mode: bool = True, cv: int = 5):
+    prediction = model.predict(data.features)
+    metrics = {
+        'mse': mse(data.targets, prediction),
+        'mae': mae(data.targets, prediction)
+    }
+    if train_mode:
+        metrics['cv_neg_mse'] = cross_val_score(
+            model, data.features, data.targets, cv=cv, scoring='neg_mean_squared_error'
+        ).tolist(),
+        metrics['cv_neg_mae'] = cross_val_score(
+            model, data.features, data.targets, cv=cv, scoring='neg_mean_absolute_error'
+        ).tolist(),
+
+    return metrics
