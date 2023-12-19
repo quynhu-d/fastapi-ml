@@ -1,9 +1,7 @@
-from data import Data
-from data import LinearRegressionConfig, RandomForestRegressorConfig, DecisionTreeRegressorConfig, SVRConfig
-import json
 import os
 import pickle
 from typing import Union
+from custom_typing import *
 
 from sklearn.linear_model import LinearRegression
 from sklearn.tree import DecisionTreeRegressor
@@ -18,15 +16,6 @@ def get_model(
     model_type: str, 
     params: Union[LinearRegressionConfig, RandomForestRegressorConfig, DecisionTreeRegressorConfig, SVRConfig]
 ):
-    # if model_config_path:
-    #     with open(model_config_path, 'r') as f:
-    #         model_config_dict = json.load(f)
-    #         model_config_dict = {param: val for param, val in model_config_dict.items() if val}
-    # else:
-    #     model_config_dict = {}
-    # model_config_dict = {param: val for param, val in model_config.dict().items() if val}
-    # print(model_config_dict)
-    # return None
     model_config_dict = params.model_dump()
     if model_type == 'LinearRegression':
         model = LinearRegression(**model_config_dict)

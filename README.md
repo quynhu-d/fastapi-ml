@@ -34,7 +34,11 @@ API with Swagger Documentation can be accessed via http://localhost:8008/docs#/.
 
 1. [`list_models`](http://localhost:8008/list_models) List available models.
 2. `train`: train regression model (see documentation via swagger)
-3. `predict`: predict for one sample using fitted model (see documentation via swagger)
+3. `predict`: predict using fitted model (see documentation via swagger)
+4. `retrain`: retrain previously fitted model (see documentation via swagger)
+5. `delete_model`: delete existing model checkpoint
 
 ## Example:
-Pass `data/train_data.json` as `data` and `data/svr_config.json` as `model_config_path` to `train` upon query.
+Pass `data/train_data.json` as `data` and `examples/svr_config.json` as `params` to `train` upon query.
+
+**All parameters must be filled in** (can be None), see LinearRegressionConfig/RandomForestRegressorConfig/DecisionTreeRegressorConfig/SVRConfig specification in Schemas.

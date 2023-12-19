@@ -1,10 +1,11 @@
 import uvicorn
 from fastapi import FastAPI, HTTPException
-from data import *
+import os
+
+from custom_typing import *
 from typing import Optional, Union
 from model import AVAILABLE_MODELS as models_list
 from model import get_model, load_model, save_model, delete_model, eval_trained_model
-import os
 
 
 app = FastAPI(
@@ -32,10 +33,10 @@ async def predict(data: Data, model_path: str = '../models/svr.pkl'):
     - **data** (Data): sample features
     - **model_path** (str): path to fitted model
     
-    Returns:
-    
-    - **prediction** (dict): grade predictions
-    - **mae, mse** if target is provided
+    Returns dictionary with items:
+    - **prediction**: grade predictions
+    - **mse**: mse score if target is provided
+    - **mae**: mae score if target is provided
     """
     if not os.path.exists(model_path):
         raise HTTPException(status_code=404, detail="Model not found")
@@ -62,10 +63,13 @@ async def train(
     Parameters:
 
     - **data** (Data): data to be fitted on
+    - **model_type** (str): model to fit (LinearRegression/DecisionTreeRegressor/RandomForestRegressor/SVR)
+    - **params** (LinearRegressionConfig/RandomForestRegressorConfig/DecisionTreeRegressorConfig/SVRConfig):
+    model hyperparameters
     - **model_path** (str): path to save model file
     - **cv_eval** (int): number of folds for evaluating
     
-    Returns: dictionary **metrics** with items:
+    Returns: dictionary with items:
     - **mse** (float): mse score on train set,
     - **mae** (float): mae score on train set,
     - **cv_neg_mse** (list of float): negated mse scores for each fold,
@@ -88,7 +92,7 @@ async def train(
     metrics = eval_trained_model(model, data, cv=cv_eval)   
     return metrics 
 
-@app.post("/retrain", summary='Retrain previously fitted model on new data.')
+@app.put("/retrain", summary='Retrain previously fitted model on new data.')
 async def retrain(
     data: Data, model_path: str = '../models/svr.pkl', cv_eval: Optional[int] = 2
 ):
