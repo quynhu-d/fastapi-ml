@@ -1,7 +1,7 @@
 import uvicorn
 from fastapi import FastAPI, HTTPException
-from data import Data
-from typing import Optional
+from data import *
+from typing import Optional, Union
 from model import AVAILABLE_MODELS as models_list
 from model import get_model, load_model, save_model, delete_model, eval_trained_model
 import os
@@ -22,7 +22,6 @@ def index():
 def list_models():
     return "Available models: " + ', '.join(models_list)
 
-
 @app.post("/predict", summary='Predict grade.')
 async def predict(data: Data, model_path: str = '../models/svr.pkl'):
     """
@@ -41,18 +40,20 @@ async def predict(data: Data, model_path: str = '../models/svr.pkl'):
     if not os.path.exists(model_path):
         raise HTTPException(status_code=404, detail="Model not found")
     model = load_model(model_path)
-    prediction = model.predict(data.features)
-
+    try:
+        prediction = model.predict(data.features)
+    except ValueError as ve:
+        raise HTTPException(status_code=404, detail=str(ve))
+    output = {'predicted grades': prediction.tolist()}
     if data.targets is not None:
-        metrics = eval_trained_model(model, data, train_mode=False)   
-    return {'predicted grades': prediction.tolist()} | metrics
+        output |= eval_trained_model(model, data, train_mode=False)           
+    return output
 
 @app.post("/train", summary='Train model on given data.')
 async def train(
     data: Data,
-    model_type: str = 'SVR', 
-    model_config_path: str = None,
-    # model_config: ModelConfig = ModelConfig(), 
+    model_type: str, 
+    params: Union[LinearRegressionConfig, RandomForestRegressorConfig, DecisionTreeRegressorConfig, SVRConfig],
     model_path: Optional[str] = None, cv_eval: Optional[int] = 2
 ):
     """
@@ -62,21 +63,22 @@ async def train(
 
     - **data** (Data): data to be fitted on
     - **model_type** (str): model to fit (LinearRegression/DecisionTreeRegressor/RandomForestRegressor/SVR)
+    - **params** (LinearRegressionConfig/RandomForestRegressorConfig/DecisionTreeRegressorConfig/SVRConfig): model hyperparameters
     - **model_path** (str): path to save model file
     - **cv_eval** (int): number of folds for evaluating
     
     Returns: dictionary **metrics** with items:
+    - **mse** (float): mse score on train set,
+    - **mae** (float): mae score on train set,
     - **cv_neg_mse** (list of float): negated mse scores for each fold,
-    - **cv_neg_mae** (list of float): negated mae scores for each fold,
-    - **mse_train** (float): mse score on train set,
-    - **mae_train** (float): mae score on train set
+    - **cv_neg_mae** (list of float): negated mae scores for each fold
     """
     if model_type not in models_list:
         raise HTTPException(
             status_code=404,
             detail=f"Model {model_type} not available. Please choose from {models_list}."
         )
-    model = get_model(model_type, model_config_path)
+    model = get_model(model_type, params)
     if data.targets is None:
         raise HTTPException(
             status_code=400,
@@ -88,7 +90,7 @@ async def train(
     metrics = eval_trained_model(model, data, cv=cv_eval)   
     return metrics 
 
-@app.post("/delete_model", summary='Delete model.')
+@app.delete("/delete_model", summary='Delete model.')
 async def delete(
     model_path: str
 ):
@@ -103,8 +105,6 @@ async def delete(
         raise HTTPException(status_code=404, detail="Model not found")
     delete_model(model_path)
     return f"Deleted model {model_path}"
-    #TODO: return hyperparameters/print smth
-
 
 if __name__ == '__main__':
     uvicorn.run("app:app", host='0.0.0.0', port=8008, reload=True)
