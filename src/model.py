@@ -1,19 +1,25 @@
 import os
 import pickle
 from typing import Union
-from custom_typing import *
+from custom_typing import Data
+from custom_typing import LinearRegressionConfig, SVRConfig
+from custom_typing import DecisionTreeRegressorConfig
+from custom_typing import RandomForestRegressorConfig
+
 
 from sklearn.linear_model import LinearRegression
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.svm import SVR
 from sklearn.model_selection import cross_val_score
-from sklearn.metrics import mean_absolute_error as mae, mean_squared_error as mse
+from sklearn.metrics import mean_absolute_error as mae
+from sklearn.metrics import mean_squared_error as mse
 
 AVAILABLE_MODELS = ["LinearRegression", "DecisionTreeRegressor", "RandomForestRegressor", "SVR"]
 
+
 def get_model(
-    model_type: str, 
+    model_type: str,
     params: Union[LinearRegressionConfig, RandomForestRegressorConfig, DecisionTreeRegressorConfig, SVRConfig]
 ):
     model_config_dict = params.model_dump()
@@ -27,19 +33,23 @@ def get_model(
         model = SVR(**model_config_dict)
     return model
 
+
 def load_model(model_path):
     with open(model_path, 'rb') as f:
         model = pickle.load(f)
     return model
 
+
 def save_model(model, model_path):
     with open(model_path, 'wb') as f:
         pickle.dump(model, f)
 
+
 def delete_model(model_path: str):
     os.remove(model_path)
 
-def eval_trained_model(model, data:Data, train_mode: bool = True, cv: int = 5):
+
+def eval_trained_model(model, data: Data, train_mode: bool = True, cv: int = 5):
     prediction = model.predict(data.features)
     metrics = {
         'mse': mse(data.targets, prediction),
@@ -50,7 +60,8 @@ def eval_trained_model(model, data:Data, train_mode: bool = True, cv: int = 5):
             model, data.features, data.targets, cv=cv, scoring='neg_mean_squared_error'
         ).tolist(),
         metrics['cv_neg_mae'] = cross_val_score(
-            model, data.features, data.targets, cv=cv, scoring='neg_mean_absolute_error'
+            model, data.features, data.targets,
+            cv=cv, scoring='neg_mean_absolute_error'
         ).tolist(),
 
     return metrics

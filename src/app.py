@@ -2,16 +2,21 @@ import uvicorn
 from fastapi import FastAPI, HTTPException
 import os
 
-from custom_typing import *
+from custom_typing import Data
+from custom_typing import LinearRegressionConfig, SVRConfig
+from custom_typing import DecisionTreeRegressorConfig
+from custom_typing import RandomForestRegressorConfig
 from typing import Optional, Union
-from model import AVAILABLE_MODELS as models_list
-from model import get_model, load_model, save_model, delete_model, eval_trained_model
+
+from model import AVAILABLE_MODELS as models_list, eval_trained_model
+from model import get_model, load_model, save_model, delete_model
 
 
 app = FastAPI(
-    title = "Student grade prediction",
-    openapi_url = "/grade_alcohol_api.json"
+    title="Student grade prediction",
+    openapi_url="/grade_alcohol_api.json"
 )
+
 
 @app.get("/", summary='Index page.')
 def index():
@@ -19,9 +24,11 @@ def index():
         "Dataset url": "https://www.kaggle.com/datasets/uciml/student-alcohol-consumption/data"
     }
 
+
 @app.get("/list_models", summary='List available regression models.')
 def list_models():
     return "Available models: " + ', '.join(models_list)
+
 
 @app.post("/predict", summary='Predict grade.')
 async def predict(data: Data, model_path: str = '../models/svr.pkl'):
@@ -32,7 +39,7 @@ async def predict(data: Data, model_path: str = '../models/svr.pkl'):
 
     - **data** (Data): sample features
     - **model_path** (str): path to fitted model
-    
+
     Returns dictionary with items:
     - **prediction**: grade predictions
     - **mse**: mse score if target is provided
@@ -47,13 +54,14 @@ async def predict(data: Data, model_path: str = '../models/svr.pkl'):
         raise HTTPException(status_code=404, detail=str(ve))
     output = {'predicted grades': prediction.tolist()}
     if data.targets is not None:
-        output |= eval_trained_model(model, data, train_mode=False)           
+        output |= eval_trained_model(model, data, train_mode=False)
     return output
+
 
 @app.post("/train", summary='Train model on given data.')
 async def train(
     data: Data,
-    model_type: str, 
+    model_type: str,
     params: Union[LinearRegressionConfig, RandomForestRegressorConfig, DecisionTreeRegressorConfig, SVRConfig],
     model_path: Optional[str] = None, cv_eval: Optional[int] = 2
 ):
@@ -68,7 +76,7 @@ async def train(
     model hyperparameters
     - **model_path** (str): path to save model file
     - **cv_eval** (int): number of folds for evaluating
-    
+
     Returns: dictionary with items:
     - **mse** (float): mse score on train set,
     - **mae** (float): mae score on train set,
@@ -89,12 +97,15 @@ async def train(
     model.fit(data.features, data.targets)
     if model_path:
         save_model(model, model_path)
-    metrics = eval_trained_model(model, data, cv=cv_eval)   
-    return metrics 
+    metrics = eval_trained_model(model, data, cv=cv_eval)
+    return metrics
+
 
 @app.put("/retrain", summary='Retrain previously fitted model on new data.')
 async def retrain(
-    data: Data, model_path: str = '../models/svr.pkl', cv_eval: Optional[int] = 2
+    data: Data,
+    model_path: str = '../models/svr.pkl',
+    cv_eval: Optional[int] = 2
 ):
     """
     Retrain regression model.
@@ -104,9 +115,9 @@ async def retrain(
     - **data** (Data): data to be fitted on
     - **model_path** (str): path to previously fitted model
     - **cv_eval** (int): number of folds for evaluating
-    
+
     Returns: dictionary **metrics** with items:
-    
+
     - **mse** (float): mse score on train set,
     - **mae** (float): mae score on train set,
     - **cv_neg_mse** (list of float): negated mse scores for each fold,
@@ -125,8 +136,9 @@ async def retrain(
     except ValueError as ve:
         raise HTTPException(status_code=404, detail=str(ve))
     save_model(model, model_path)
-    metrics = eval_trained_model(model, data, cv=cv_eval)   
-    return metrics 
+    metrics = eval_trained_model(model, data, cv=cv_eval)
+    return metrics
+
 
 @app.delete("/delete_model", summary='Delete model.')
 async def delete(
