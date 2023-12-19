@@ -1,9 +1,10 @@
+from fastapi import HTTPException
 from pydantic import BaseModel
 from typing import Optional, List
 from data import Data
 import json
-import pickle
 import os
+import pickle
 
 from sklearn.linear_model import LinearRegression
 from sklearn.tree import DecisionTreeRegressor
@@ -11,7 +12,6 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.svm import SVR
 from sklearn.model_selection import cross_val_score
 from sklearn.metrics import mean_absolute_error as mae, mean_squared_error as mse
-
 
 AVAILABLE_MODELS = ["LinearRegression", "DecisionTreeRegressor", "RandomForestRegressor", "SVR"]
 

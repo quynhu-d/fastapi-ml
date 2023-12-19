@@ -1,10 +1,9 @@
 import uvicorn
-from fastapi import FastAPI, HTTPException, Body
-from data import Item
-from typing import Dict, List, Optional
-from predict import predict
-from model import AVAILABLE_MODELS as models_list, get_model
-from train import train_model, eval_trained_model
+from fastapi import FastAPI, HTTPException
+from data import Data
+from typing import Optional
+from model import AVAILABLE_MODELS as models_list
+from model import get_model, load_model, save_model, delete_model, eval_trained_model
 import os
 
 
@@ -37,6 +36,7 @@ async def predict(data: Data, model_path: str = '../models/svr.pkl'):
     Returns:
     
     - **prediction** (dict): grade predictions
+    - **mae, mse** if target is provided
     """
     if not os.path.exists(model_path):
         raise HTTPException(status_code=404, detail="Model not found")
