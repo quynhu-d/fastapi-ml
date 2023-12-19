@@ -62,8 +62,6 @@ async def train(
     Parameters:
 
     - **data** (Data): data to be fitted on
-    - **model_type** (str): model to fit (LinearRegression/DecisionTreeRegressor/RandomForestRegressor/SVR)
-    - **params** (LinearRegressionConfig/RandomForestRegressorConfig/DecisionTreeRegressorConfig/SVRConfig): model hyperparameters
     - **model_path** (str): path to save model file
     - **cv_eval** (int): number of folds for evaluating
     
@@ -87,6 +85,42 @@ async def train(
     model.fit(data.features, data.targets)
     if model_path:
         save_model(model, model_path)
+    metrics = eval_trained_model(model, data, cv=cv_eval)   
+    return metrics 
+
+@app.post("/retrain", summary='Retrain previously fitted model on new data.')
+async def retrain(
+    data: Data, model_path: str = '../models/svr.pkl', cv_eval: Optional[int] = 2
+):
+    """
+    Retrain regression model.
+
+    Parameters:
+
+    - **data** (Data): data to be fitted on
+    - **model_path** (str): path to previously fitted model
+    - **cv_eval** (int): number of folds for evaluating
+    
+    Returns: dictionary **metrics** with items:
+    
+    - **mse** (float): mse score on train set,
+    - **mae** (float): mae score on train set,
+    - **cv_neg_mse** (list of float): negated mse scores for each fold,
+    - **cv_neg_mae** (list of float): negated mae scores for each fold
+    """
+    if not os.path.exists(model_path):
+        raise HTTPException(status_code=404, detail="Model not found")
+    model = load_model(model_path)
+    if data.targets is None:
+        raise HTTPException(
+            status_code=400,
+            detail="Target not provided"
+        )
+    try:
+        model.fit(data.features, data.targets)
+    except ValueError as ve:
+        raise HTTPException(status_code=404, detail=str(ve))
+    save_model(model, model_path)
     metrics = eval_trained_model(model, data, cv=cv_eval)   
     return metrics 
 
