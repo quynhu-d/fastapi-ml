@@ -39,6 +39,6 @@ API with Swagger Documentation can be accessed via http://localhost:8008/docs#/.
 5. `delete_model`: delete existing model checkpoint
 
 ## Example:
-Pass `data/train_data.json` as `data` and `examples/svr_config.json` as `params` to `train` upon query.
+Pass `data/train_data.json` as `data` and `examples/model_configs/svr_config.json` as `params` to `train` upon query.
 
-**All parameters must be filled in** (can be None), see LinearRegressionConfig/RandomForestRegressorConfig/DecisionTreeRegressorConfig/SVRConfig specification in Schemas.
+**All parameters must be filled in** (can be None), see LinearRegressionConfig/RandomForestRegressorConfig/DecisionTreeRegressorConfig/SVRConfig specification in Schemas and/or example values in `examples/model_configs`.
