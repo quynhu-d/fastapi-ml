@@ -2,4 +2,4 @@
     remote = minio
 ['remote "minio"']
     url = s3://datasets
-    endpointurl = http://127.0.0.1:9001
+    endpointurl = minio:9000
