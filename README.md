@@ -52,8 +52,8 @@ API with Swagger Documentation can be accessed via http://localhost:8008/docs#/.
 ## Functionality:
 
 1. [`list_models`](http://localhost:8008/list_models) List available models.
-2. `list_saved_models`: List saved trained models.
-3. `list_saved_datasets`: List saved datasets.
+2. [`list_saved_models`](http://localhost:8008/list_saved_models): List saved trained models.
+3. [`list_saved_datasets`](http://localhost:8008/list_saved_datasets): List saved datasets.
 4. `save_data`: Save datasets.
 5. `train`: train regression model (see documentation via swagger)
 6. `predict`: predict using fitted model (see documentation via swagger)
