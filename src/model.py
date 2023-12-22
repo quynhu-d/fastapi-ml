@@ -20,7 +20,10 @@ AVAILABLE_MODELS = ["LinearRegression", "DecisionTreeRegressor", "RandomForestRe
 
 def get_model(
     model_type: str,
-    params: Union[LinearRegressionConfig, RandomForestRegressorConfig, DecisionTreeRegressorConfig, SVRConfig]
+    params: Union[
+        LinearRegressionConfig, RandomForestRegressorConfig,
+        DecisionTreeRegressorConfig, SVRConfig
+    ]
 ):
     model_config_dict = params.model_dump()
     if model_type == 'LinearRegression':

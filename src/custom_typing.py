@@ -15,7 +15,7 @@ class Data(BaseModel):
 
 class LinearRegressionConfig(BaseModel):
     fit_intercept: Optional[bool] = Field(
-        description='Specifies if a constant (a.k.a. bias or intercept) should be added to the decision function.'
+        description='Specifies if a constant should be added to the decision function.'
     )
 
 
@@ -55,12 +55,18 @@ class RandomForestRegressorConfig(DecisionTreeRegressorConfig):
 
 
 class SVRConfig(BaseModel):
-    kernel: Optional[str] = Field(description="Specifies the kernel type to be used in the algorithm.")
+    kernel: Optional[str] = Field(
+        description="Specifies the kernel type to be used in the algorithm."
+    )
     degree: Optional[int] = Field(description="Degree of the polynomial kernel function ('poly').")
-    gamma: Optional[Union[str, float]] = Field(description="Kernel coefficient for 'rbf', 'poly' and 'sigmoid'.")
+    gamma: Optional[Union[str, float]] = Field(
+        description="Kernel coefficient for 'rbf', 'poly' and 'sigmoid'."
+    )
     coef0: Optional[float] = Field(description="Independent term in kernel function.")
     tol: Optional[float] = Field(description="Tolerance for stopping criterion.")
     C: Optional[float] = Field(description="Regularization parameter.")
     epsilon: Optional[float] = Field(description="Epsilon in the epsilon-SVR model.")
     shrinking: Optional[bool] = Field(description="Whether to use the shrinking heuristic.")
-    max_iter: Optional[int] = Field(description="Hard limit on iterations within solver, or -1 for no limit.")
+    max_iter: Optional[int] = Field(
+        description="Hard limit on iterations within solver, or -1 for no limit."
+    )
