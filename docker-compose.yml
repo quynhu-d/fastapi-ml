@@ -2,8 +2,8 @@ version: '3'
 
 services:
   grade-prediction-app:
-    image: quynhud/grade-prediction-app:latest
-    # build: .
+    # image: quynhud/grade-prediction-app:latest
+    build: .
     container_name: grade-prediction-app
     ports:
       - "8008:8008"
