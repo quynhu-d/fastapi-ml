@@ -1,4 +1,4 @@
-name: Docker Image CI
+name: CI Pipeline
 
 on:
   # push:
@@ -12,7 +12,7 @@ on:
 jobs:
 
   docker:
-    if: github.event.pull_request.merged == true
+    if: github.event.pull_request.merged
     runs-on: ubuntu-latest
 
     steps:
@@ -33,5 +33,15 @@ jobs:
     # - name: Run application
     #   run: docker-compose up -d
 
+    - name: Setup Python
+      uses: actions/setup-python@v1
+      with:
+        python-version: 3.9.9
+        architecture: x64    
+    - name: Install flake8
+      run: pip install flake8
+    - name: Run flake8 lint
+      run: flake8 src
+    
     # - name: Run tests
     #   run: pytest src/test_app.py
