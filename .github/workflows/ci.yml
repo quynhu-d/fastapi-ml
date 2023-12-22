@@ -1,8 +1,8 @@
 name: CI Pipeline
 
 on:
-  push:
-    branches: [ "master" ]
+  # push:
+  #   branches: [ "master" ]
   pull_request:
     types:
         - closed
@@ -12,7 +12,7 @@ on:
 jobs:
 
   docker_and_linter:
-    # if: github.event.pull_request.merged
+    if: github.event.pull_request.merged
     runs-on: ubuntu-latest
 
     steps:
