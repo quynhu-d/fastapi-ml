@@ -45,6 +45,15 @@ docker-compose up -d
 ```
 Minio s3 at http://localhost:9001/.
 
+## HW3
+
+Unit tests in `src/test_app.py`
+```bash
+pytest src/test_app.py
+```
+Loading and saving functions for s3 are mocked.
+
+
 ## Documentation
 
 API with Swagger Documentation can be accessed via http://localhost:8008/docs#/.
