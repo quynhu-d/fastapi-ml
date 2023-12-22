@@ -53,6 +53,8 @@ pytest src/test_app.py
 ```
 Loading and saving functions for s3 are mocked.
 
+CI with Github Actions: `.github/workflows/ci.yml`:
+- Builds and pushes Docker images to Docker Hub upon merge requests
 
 ## Documentation
 
