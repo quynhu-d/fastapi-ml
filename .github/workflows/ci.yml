@@ -11,7 +11,7 @@ on:
 
 jobs:
 
-  docker:
+  docker_and_linter:
     if: github.event.pull_request.merged
     runs-on: ubuntu-latest
 
@@ -36,12 +36,11 @@ jobs:
     - name: Setup Python
       uses: actions/setup-python@v1
       with:
-        python-version: 3.9.9
-        architecture: x64    
+        python-version: 3.9.18
     - name: Install flake8
       run: pip install flake8
-    - name: Run flake8 lint
-      run: flake8 src
+    - name: Run flake8 linter
+      run: flake8 --max-line-length=100 src
     
     # - name: Run tests
     #   run: pytest src/test_app.py

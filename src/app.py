@@ -98,7 +98,10 @@ async def predict(data: Union[Data, str], model_path: str = 'svr.pkl'):
 async def train(
     data: Union[Data, str],
     model_type: str,
-    params: Union[LinearRegressionConfig, RandomForestRegressorConfig, DecisionTreeRegressorConfig, SVRConfig],
+    params: Union[
+        LinearRegressionConfig, RandomForestRegressorConfig,
+        DecisionTreeRegressorConfig, SVRConfig
+    ],
     model_path: Optional[str] = None, cv_eval: Optional[int] = 2
 ):
     """
@@ -107,8 +110,10 @@ async def train(
     Parameters:
 
     - **data** (Data or str): data to be fitted on, if str, data is loaded from minio
-    - **model_type** (str): model to fit (LinearRegression/DecisionTreeRegressor/RandomForestRegressor/SVR)
-    - **params** (LinearRegressionConfig/RandomForestRegressorConfig/DecisionTreeRegressorConfig/SVRConfig):
+    - **model_type** (str): model to fit
+    (LinearRegression/DecisionTreeRegressor/RandomForestRegressor/SVR)
+    - **params** (LinearRegressionConfig/RandomForestRegressorConfig/
+    DecisionTreeRegressorConfig/SVRConfig):
     model hyperparameters
     - **model_path** (str): path to save model file
     - **cv_eval** (int): number of folds for evaluating
