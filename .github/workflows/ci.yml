@@ -21,10 +21,10 @@ jobs:
         password: ${{ secrets.DOCKER_PASSWORD }}
 
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag ${{ secrets.DOCKER_USERNAME }}/grade-prediction-app:$(date +%s)
+      run: docker build . --file Dockerfile --tag ${{ secrets.DOCKER_USERNAME }}/grade-prediction-app:$(date)
 
     - name: Push the Docker image
-      run: docker push ${{ secrets.DOCKER_USERNAME }}/grade-prediction-app:$(date +%s)
+      run: docker push ${{ secrets.DOCKER_USERNAME }}/grade-prediction-app:$(date)
 
     # - name: Run application
     #   run: docker-compose up -d
