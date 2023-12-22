@@ -54,9 +54,9 @@ pytest src/test_app.py
 Loading and saving functions for s3 are mocked.
 
 CI with Github Actions: `.github/workflows/ci.yml`:
-- Builds and pushes Docker images to Docker Hub upon merge requests
-- Flake8 linter
-- 
+- Builds and pushes Docker images to Docker Hub **only upon merge requests**
+- Flake8 linter (allows lines up to 100 characters)
+
 ## Documentation
 
 API with Swagger Documentation can be accessed via http://localhost:8008/docs#/.
